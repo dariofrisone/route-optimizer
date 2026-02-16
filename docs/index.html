@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Optimizer - MyGeotab</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: #f8f9fa;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #ddd;
+        }
+
+        h1 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #0066cc;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+
+        .btn-primary {
+            background: #0066cc;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0052a3;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stops-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .stop-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #0066cc;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stop-item.optimized {
+            border-left-color: #28a745;
+        }
+
+        .stop-number {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #0066cc;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 11px;
+            margin-right: 8px;
+        }
+
+        .stop-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .summary {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .summary-stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .summary-stat strong {
+            color: #0066cc;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            min-width: 250px;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-success {
+            border-left: 4px solid #28a745;
+        }
+
+        .toast-error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .toast-info {
+            border-left: 4px solid #0066cc;
+        }
+
+        .setup-notice {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .setup-notice strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>🗺️ Route Optimizer</h1>
+
+            <!-- Setup Notice -->
+            <div id="setup-notice" class="setup-notice" style="display: none;">
+                <strong>⚠️ Setup Required</strong>
+                <p>Please enter your TomTom API key in the settings below.</p>
+            </div>
+
+            <!-- Settings -->
+            <div class="section">
+                <h3>⚙️ Settings</h3>
+                <label>TomTom API Key</label>
+                <input type="text" id="tomtom-key" placeholder="Enter your TomTom API key">
+                <button onclick="saveSettings()" class="btn-secondary">Save Settings</button>
+            </div>
+
+            <!-- Vehicle & Driver -->
+            <div class="section">
+                <h3>🚗 Vehicle & Driver</h3>
+                <label>Vehicle</label>
+                <select id="vehicle-select">
+                    <option value="">Select vehicle...</option>
+                </select>
+
+                <label>Driver</label>
+                <select id="driver-select">
+                    <option value="">Select driver...</option>
+                </select>
+            </div>
+
+            <!-- Stops -->
+            <div class="section">
+                <h3>📍 Stops (<span id="stop-count">0</span>)</h3>
+                <div id="stops-list" class="stops-list">
+                    <div class="empty-state">Click map to add stops</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="section">
+                <button id="optimize-btn" onclick="optimizeRoute()" class="btn-primary" disabled>
+                    ⚡ Optimize Route
+                </button>
+                <button id="send-btn" onclick="sendToDriver()" class="btn-success" disabled>
+                    📱 Send to Driver
+                </button>
+                <button onclick="clearAll()" class="btn-danger">
+                    🗑️ Clear All
+                </button>
+            </div>
+
+            <!-- Summary -->
+            <div id="summary" class="summary" style="display: none;">
+                <h3>📊 Route Summary</h3>
+                <div class="summary-stat">
+                    <span>Distance:</span>
+                    <strong id="total-distance">--</strong>
+                </div>
+                <div class="summary-stat">
+                    <span>Duration:</span>
+                    <strong id="total-duration">--</strong>
+                </div>
+                <div class="summary-stat">
+                    <span>Stops:</span>
+                    <strong id="total-stops">--</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- App JS -->
+    <script src="app.js"></script>
+</body>
+</html>
