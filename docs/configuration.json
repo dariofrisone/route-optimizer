@@ -4,11 +4,12 @@
   "version": "1.0.0",
   "items": [
     {
-      "page": "device",
-      "click": "https://dariofrisone.github.io/route-optimizer/",
+      "url": "index.html",
+      "path": "ActivityLink",
       "menuName": {
         "en": "Route Optimizer"
       }
     }
-  ]
+  ],
+  "isSigned": false
 }

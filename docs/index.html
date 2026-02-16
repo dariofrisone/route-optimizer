@@ -328,5 +328,17 @@
 
     <!-- App JS -->
     <script src="app.js"></script>
+
+    <!-- MyGeotab Add-In Integration -->
+    <script>
+        // MyGeotab Add-In initialization
+        if (typeof geotab !== 'undefined' && geotab.addin) {
+            geotab.addin.routeOptimizer = function(api, state) {
+                console.log('MyGeotab Add-In initialized');
+                geotabApi = api;
+                loadVehiclesAndDrivers();
+            };
+        }
+    </script>
 </body>
 </html>
