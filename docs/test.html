@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 50px;
+            text-align: center;
+        }
+        h1 { color: green; }
+        .box {
+            background: #0066cc;
+            color: white;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <h1>✅ GitHub Pages is Working!</h1>
+    <div class="box">
+        <h2>Route Optimizer Test Page</h2>
+        <p>If you can see this, GitHub Pages is working correctly.</p>
+        <p>Time: <span id="time"></span></p>
+    </div>
+    <script>
+        document.getElementById('time').textContent = new Date().toLocaleString();
+    </script>
+</body>
+</html>
