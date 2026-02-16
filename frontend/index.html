@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Optimizer - MyGeotab</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <h1>🗺️ Route Optimizer</h1>
+            <div class="header-stats">
+                <span id="budget-indicator" class="badge">Loading...</span>
+                <span id="cache-indicator" class="badge">Cache: --</span>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Left Panel: Route Builder -->
+            <div class="panel panel-left">
+                <h2>Route Builder</h2>
+
+                <!-- Vehicle & Driver Selection -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="vehicle-select">Vehicle</label>
+                        <select id="vehicle-select" class="form-control">
+                            <option value="">Select vehicle...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="driver-select">Driver</label>
+                        <select id="driver-select" class="form-control">
+                            <option value="">Select driver...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="route-name">Route Name</label>
+                        <input type="text" id="route-name" class="form-control" placeholder="e.g., Milan Deliveries">
+                    </div>
+                </div>
+
+                <!-- Route Stops -->
+                <div class="form-section">
+                    <h3>Stops <span id="stop-count" class="badge">0</span></h3>
+
+                    <div id="stops-list" class="stops-list">
+                        <div class="empty-state">
+                            <p>Click on the map to add stops</p>
+                        </div>
+                    </div>
+
+                    <button id="add-stop-btn" class="btn btn-secondary btn-block">
+                        ➕ Add Stop Manually
+                    </button>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-section">
+                    <button id="optimize-btn" class="btn btn-primary btn-block" disabled>
+                        ⚡ Optimize Route
+                    </button>
+
+                    <button id="send-to-driver-btn" class="btn btn-success btn-block" disabled>
+                        📱 Send to Driver
+                    </button>
+
+                    <button id="clear-btn" class="btn btn-danger btn-block">
+                        🗑️ Clear All
+                    </button>
+                </div>
+
+                <!-- Route Summary -->
+                <div id="route-summary" class="route-summary" style="display: none;">
+                    <h3>Route Summary</h3>
+                    <div class="summary-stats">
+                        <div class="stat">
+                            <span class="stat-label">Distance</span>
+                            <span id="total-distance" class="stat-value">--</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Duration</span>
+                            <span id="total-duration" class="stat-value">--</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Stops</span>
+                            <span id="total-stops" class="stat-value">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Map -->
+            <div class="panel panel-right">
+                <div id="map"></div>
+
+                <!-- Map Controls -->
+                <div class="map-controls">
+                    <button id="toggle-traffic-btn" class="btn btn-sm" title="Toggle Traffic Layer">
+                        🚦 Traffic
+                    </button>
+                    <button id="refresh-traffic-btn" class="btn btn-sm" title="Refresh Traffic Data">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay" style="display: none;">
+            <div class="spinner"></div>
+            <p id="loading-message">Processing...</p>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <!-- Modal: Add Stop -->
+    <div id="add-stop-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Stop</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Stop Name</label>
+                    <input type="text" id="stop-name" class="form-control" placeholder="e.g., Customer A">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" id="stop-address" class="form-control" placeholder="e.g., Via Roma 123, Milan">
+                </div>
+                <div class="form-group">
+                    <label>Latitude</label>
+                    <input type="number" id="stop-lat" class="form-control" step="0.000001" placeholder="45.4642">
+                </div>
+                <div class="form-group">
+                    <label>Longitude</label>
+                    <input type="number" id="stop-lon" class="form-control" step="0.000001" placeholder="9.1900">
+                </div>
+                <div class="form-group">
+                    <label>Service Duration (minutes)</label>
+                    <input type="number" id="stop-duration" class="form-control" value="10" min="1">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-cancel-btn" class="btn btn-secondary">Cancel</button>
+                <button id="modal-add-btn" class="btn btn-primary">Add Stop</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- App JS -->
+    <script src="js/map/map-manager.js"></script>
+    <script src="js/route/optimizer-client.js"></script>
+    <script src="js/route/route-builder.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

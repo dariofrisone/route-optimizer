@@ -1,0 +1,16 @@
+{
+  "name": "Route Optimizer",
+  "supportEmail": "frisonedario95@gmail.com",
+  "version": "1.0.0",
+  "items": [
+    {
+      "url": "index.html",
+      "path": "ActivityLink",
+      "menuName": {
+        "en": "Route Optimizer"
+      },
+      "icon": "images/icon.png"
+    }
+  ],
+  "isSigned": false
+}

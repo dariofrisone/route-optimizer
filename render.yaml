@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: route-optimizer
+    env: node
+    buildCommand: npm install
+    startCommand: node backend/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: OSRM_URL
+        value: http://router.project-osrm.org
+      - key: TOMTOM_API_KEY
+        sync: false
+      - key: GEOTAB_USERNAME
+        sync: false
+      - key: GEOTAB_PASSWORD
+        sync: false
+      - key: GEOTAB_DATABASE
+        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: route-optimizer-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: route-optimizer-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: route-optimizer-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: route-optimizer-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: route-optimizer-db
+          property: password
+
+databases:
+  - name: route-optimizer-db
+    databaseName: route_optimizer
+    user: route_optimizer_user
+    plan: free
