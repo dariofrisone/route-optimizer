@@ -6,6 +6,7 @@
     {
       "url": "index.html",
       "path": "ActivityLink",
+      "icon": "icon.svg",
       "menuName": {
         "en": "Route Optimizer"
       }
