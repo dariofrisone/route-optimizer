@@ -409,9 +409,16 @@ function showToast(message, type = 'info', duration = 3000) {
 }
 
 // MyGeotab Add-In lifecycle functions
-window.geotab = window.geotab || {};
-window.geotab.addin = window.geotab.addin || {};
-window.geotab.addin.routeOptimizer = function(api, state) {
+function geotabAddinRouteOptimizer(api, state) {
+    console.log('MyGeotab Add-In Initialize Called');
     geotabApi = api;
     loadVehiclesAndDrivers();
-};
+    console.log('MyGeotab Add-In Initialized Successfully');
+}
+
+// Export for MyGeotab
+if (typeof window !== 'undefined') {
+    window.geotab = window.geotab || {};
+    window.geotab.addin = window.geotab.addin || {};
+    window.geotab.addin.routeOptimizer = geotabAddinRouteOptimizer;
+}

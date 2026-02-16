@@ -329,15 +329,17 @@
     <!-- App JS -->
     <script src="app.js"></script>
 
-    <!-- MyGeotab Add-In Integration -->
+    <!-- Debug Script -->
     <script>
-        // MyGeotab Add-In initialization
-        if (typeof geotab !== 'undefined' && geotab.addin) {
-            geotab.addin.routeOptimizer = function(api, state) {
-                console.log('MyGeotab Add-In initialized');
-                geotabApi = api;
-                loadVehiclesAndDrivers();
-            };
+        console.log('Route Optimizer loaded at:', new Date().toISOString());
+        console.log('Window location:', window.location.href);
+        console.log('Geotab API available:', typeof geotab !== 'undefined');
+
+        // Log if running in iframe
+        if (window.self !== window.top) {
+            console.log('Running inside iframe (MyGeotab mode)');
+        } else {
+            console.log('Running standalone');
         }
     </script>
 </body>
